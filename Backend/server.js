@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 dotenv.config();
 import connectDb from "./src/config/db.js";
 import userRoute from "./src/route/user.routes.js";
@@ -7,10 +8,10 @@ import userRoute from "./src/route/user.routes.js";
 const app = express();
 
 const port = process.env.PORT || 7000;
-await connectDb();
 
 //global middleware
 app.use(express.json());
+app.use(cookieParser());
 
 //routes connected
 
@@ -20,6 +21,11 @@ app.get("/", (req, res) => {
   res.send("hunarhub");
 });
 
-app.listen(port, () => {
-  console.log(`server connected successfully port ${port}`);
-});
+const startServer = async () => {
+  await connectDb();
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+};
+
+startServer();
