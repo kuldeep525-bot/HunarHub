@@ -110,3 +110,74 @@ export const login = async (req, res) => {
       .json({ success: false, message: "Internal server error" });
   }
 };
+
+export const logout = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Kindly login first", success: false });
+    }
+    res.clearCookie("jwt");
+    return res
+      .status(200)
+      .json({ message: "User logout Successfully", success: true });
+  } catch (error) {
+    console.log("error", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const profile = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "User fetch data Successfully", success: true, user });
+  } catch (error) {
+    console.log("error", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const profileUpdated = async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+    const userId = req.user.userId;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { name, phone } },
+      { new: true },
+    );
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "User  data updated  Successfully", success: true });
+  } catch (error) {
+    console.log("error", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};

@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 import connectDb from "./src/config/db.js";
 import userRoute from "./src/route/user.routes.js";
+import workerRoute from "./src/route/worker.routes.js";
+import BookingRoute from "./src/route/booking.routes.js";
 
 const app = express();
 
@@ -14,8 +16,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 //routes connected
-
 app.use("/api/user", userRoute);
+app.use("/api/worker", workerRoute);
+app.use("/api/booking", BookingRoute);
 
 app.get("/", (req, res) => {
   res.send("hunarhub");
