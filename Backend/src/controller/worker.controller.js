@@ -1,3 +1,4 @@
+import Booking from "../models/booking.model.js";
 import User from "../models/user.model.js";
 import Worker from "../models/worker.model.js";
 
@@ -111,6 +112,64 @@ export const getWorker = async (req, res) => {
       success: true,
       message: "Worker fetched successfully",
       worker,
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const updateBookingStatus = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const bookingId = req.params.bookingId;
+    const { status } = req.body;
+
+    // Valid status check
+    const validStatus = ["accepted", "rejected", "completed"];
+    if (!validStatus.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status",
+      });
+    }
+
+    // Pehle booking find karo
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    // Worker check karo — yeh booking is worker ki hai?
+    const worker = await Worker.findOne({ userId });
+    if (!worker) {
+      return res.status(404).json({
+        success: false,
+        message: "Worker not found",
+      });
+    }
+
+    if (booking.workerId.toString() !== worker._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "it is not you Booking",
+      });
+    }
+
+    // Ab update karo
+    booking.status = status;
+    await booking.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Booking status updated successfully",
+      booking,
     });
   } catch (error) {
     console.log("error", error);

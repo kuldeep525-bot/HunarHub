@@ -15,7 +15,7 @@ const bookingSchema = new mongoose.Schema(
     },
 
     date: {
-      type: Date,
+      type: String,
       required: true,
     },
 
@@ -33,7 +33,7 @@ const bookingSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["pending", "accepted", "rejected", "completed"],
+      enum: ["pending", "accepted", "rejected", "completed", "cancelled"],
       default: "pending",
     },
 
