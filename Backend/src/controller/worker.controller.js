@@ -179,3 +179,91 @@ export const updateBookingStatus = async (req, res) => {
     });
   }
 };
+
+export const updateWorkerProfile = async (req, res) => {
+  try {
+    const { skills, area, ratePerDay } = req.body;
+    const userId = req.user.userId;
+
+    const worker = await Worker.findOneAndUpdate(
+      { userId },
+      { $set: { skills, area, ratePerDay } },
+      { new: true },
+    );
+
+    if (!worker) {
+      return res
+        .status(404)
+        .json({ message: "Worker not found", success: false });
+    }
+
+    return res.status(200).json({
+      message: "Worker updated file Successfully",
+      success: true,
+      worker,
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res
+      .status(500)
+      .json({ message: "internal server error", success: false });
+  }
+};
+
+export const deleteWorkerProfile = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const worker = await Worker.findOneAndDelete({ userId });
+
+    if (!worker) {
+      return res.status(404).json({
+        success: false,
+        message: "Worker not found or already deleted",
+      });
+    }
+
+    await User.findByIdAndUpdate(userId, { role: "user" });
+
+    return res.status(200).json({
+      success: true,
+      message: "Worker profile deleted successfully",
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+export const toggleAvalilabilty = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const worker = await Worker.findOne({ userId });
+
+    if (!worker) {
+      return res.status(404).json({
+        success: false,
+        message: "Worker not found or already deleted",
+      });
+    }
+
+    worker.isAvailable = !worker.isAvailable;
+
+    await worker.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `Worker is now ${worker.isAvailable ? "available" : "unavailable"}`,
+    });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};

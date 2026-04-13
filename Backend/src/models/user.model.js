@@ -30,6 +30,12 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String,
     },
+    otp: {
+      type: String,
+    },
+    otpExpiry: {
+      type: Date,
+    },
   },
   { timestamps: true },
 );
