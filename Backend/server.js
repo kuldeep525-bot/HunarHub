@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 dotenv.config();
 import connectDb from "./src/config/db.js";
 import userRoute from "./src/route/user.routes.js";
@@ -12,6 +13,15 @@ import chatRoute from "./src/route/chat.route.js";
 const app = express();
 
 const port = process.env.PORT || 7000;
+
+// allow all origins (simple way)
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  }),
+);
 
 //global middleware
 app.use(express.json());
