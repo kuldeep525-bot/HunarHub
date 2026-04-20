@@ -8,6 +8,6 @@ import {
 const route = express.Router();
 
 route.post("/create", authMiddleware, createReview);
-route.get("/worker/:workerId", authMiddleware, getWorkerReview);
+route.get("/worker/:workerId", getWorkerReview);
 
 export default route;

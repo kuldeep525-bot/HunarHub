@@ -1,9 +1,11 @@
 import { useState } from "react"
 import { Link ,useNavigate} from "react-router-dom"
 import api from "../utils/axios"
+import { useAuth } from "../context/AuthContext"
 
 
 function Login() {
+  const {login}=useAuth()
   const navigate=useNavigate()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -27,6 +29,7 @@ function Login() {
       if(res.data.success)
       {
         alert("Login successfully")
+        login(res.data.userData) 
       navigate("/")
       }
 

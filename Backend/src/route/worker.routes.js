@@ -15,7 +15,7 @@ const route = express.Router();
 
 route.post("/workerRegister", authMiddleware, isNotWorker, workerRegister);
 route.get("/getAllWorker", getAllWorker);
-route.get("/getWorker/:workerId", authMiddleware, getWorker);
+route.get("/getWorker/:workerId", getWorker);
 route.patch("/update/:bookingId", authMiddleware, updateBookingStatus);
 route.put("/updateWorker", authMiddleware, updateWorkerProfile);
 route.delete("/deleteWorker", authMiddleware, deleteWorkerProfile);
