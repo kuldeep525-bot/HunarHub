@@ -102,6 +102,13 @@ export const getWorker = async (req, res) => {
     );
 
     if (!worker) {
+      const worker = await Worker.findOne({ userId: workerId }).populate(
+        "userId",
+        "name email phone",
+      );
+    }
+
+    if (!worker) {
       return res.status(404).json({
         success: false,
         message: "Worker not found",

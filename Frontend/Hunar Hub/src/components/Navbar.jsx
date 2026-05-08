@@ -1,10 +1,22 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { useAuth } from "../context/AuthContext"
+import api from "../utils/axios"
 
 function Navbar() {
   const navigate = useNavigate()
-  const isLoggedIn = false // baad mein logic aayega
+  const { user, logout } = useAuth()
+  const isLoggedIn = !!user
   const [menuOpen, setMenuOpen] = useState(false)
+
+  const handleLogout = async () => {
+    try {
+      await api.post("/user/logout")
+    } catch {}
+    logout()
+    navigate("/login")
+    setMenuOpen(false)
+  }
 
   return (
     <nav className="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
@@ -20,18 +32,25 @@ function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-6">
-          <Link to="/" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
-            Home
-          </Link>
-          <Link to="/workers" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
-            Find Workers
-          </Link>
-          <Link to="/chat" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
-            🤖 AI Assistant
-          </Link>
-        </div>
+       {/* Desktop Links */}
+<div className="hidden md:flex items-center gap-6">
+  <Link to="/" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
+    Home
+  </Link>
+  <Link to="/workers" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
+    Find Workers
+  </Link>
+  <Link to="/chat" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
+    🤖 AI Assistant
+  </Link>
+
+  {/* ✅ Yeh add karo */}
+  {user?.role === "worker" && (
+    <Link to="/worker-dashboard" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
+      🔧 Worker Dashboard
+    </Link>
+  )}
+</div>
 
         {/* Desktop Auth Buttons */}
         <div className="hidden md:flex items-center gap-3">
@@ -42,12 +61,12 @@ function Navbar() {
                 className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
               >
                 <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
-                  K
+                  {user?.name?.[0]?.toUpperCase()}
                 </div>
                 Profile
               </Link>
               <button
-                onClick={() => navigate("/login")}
+                onClick={handleLogout}
                 className="text-sm font-medium text-red-500 hover:text-red-600 border border-red-200 px-4 py-2 rounded-lg hover:bg-red-50 transition-colors"
               >
                 Logout
@@ -115,9 +134,12 @@ function Navbar() {
                 onClick={() => setMenuOpen(false)}
                 className="text-sm font-medium text-gray-700 py-2 border-b border-gray-50"
               >
-                👤 Profile
+                👤 {user?.name}
               </Link>
-              <button className="text-sm font-medium text-red-500 text-left py-2">
+              <button
+                onClick={handleLogout}
+                className="text-sm font-medium text-red-500 text-left py-2"
+              >
                 🚪 Logout
               </button>
             </>

@@ -132,4 +132,21 @@ export const getMyBooking = async (req, res) => {
   }
 };
 
-//worker book kar rha hai
+export const getWorkerBookings = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const worker = await Worker.findOne({ userId });
+    if (!worker) return res.status(404).json({ message: "Worker nahi mila" });
+
+    const bookings = await Booking.find({ workerId: worker._id })
+      .populate("userId", "name email phone")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      booking: bookings,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "server error" });
+  }
+};

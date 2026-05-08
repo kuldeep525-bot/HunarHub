@@ -250,12 +250,10 @@ export const forgotPassword = async (req, res) => {
       text: message,
     });
 
-    return res
-      .status(200)
-      .json({
-        message: "If this email exists, OTP has been sent",
-        success: true,
-      });
+    return res.status(200).json({
+      message: "If this email exists, OTP has been sent",
+      success: true,
+    });
   } catch (error) {
     console.log("error", error);
     return res
